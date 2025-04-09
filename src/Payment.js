@@ -9,6 +9,9 @@ import { getBasketTotal } from './reducer';
 import axios from './axios';
 import { useNavigate } from "react-router-dom";
 import { db } from './firebase';
+import instance from './axios';
+import { collection, doc, setDoc } from 'firebase/firestore'; // Import modular methods
+
 
 
 function Payment() {
@@ -28,22 +31,21 @@ function Payment() {
     useEffect(() => {
         // generate the special stripe secret which allows us to charge a customer
         const getClientSecret = async () => {
-          try {
-            const response = await axios({
-                method: 'post',
-                // Stripe expects the total in a currencies subunits
-                url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+
+            const response = await instance({
+              method: 'post',
+              // Stripe expects total amount in the smallest currency unit (like cents)
+              url: `/payments/create?total=${getBasketTotal(basket) * 100}`
             });
-            setClientSecret(response.data.clientSecret)
-        }catch (error) {
-      console.error("💥 Error fetching client secret:", error);
-    }
-  };
+
+            setClientSecret(response.data.clientSecret);
+            console.log('Stripe client secret:', response.data.clientSecret); // ✅ Correct log
+        };
 
         getClientSecret();
-    }, [basket])
+    }, [basket]);
 
-  console.log('THe secre is >>',clientSecret)
+  console.log('THe secret is >>',clientSecret);
 
   const handleSubmit =async(event)=>{
     event.preventDefault();

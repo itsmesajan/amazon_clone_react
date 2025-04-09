@@ -6,6 +6,7 @@ import Header from './Header';
 import CheckOut from './CheckOut';
 import Login from './Login';
 import Payment from './Payment';
+import Orders from './Orders';
 import {auth} from "./firebase";
 import { useStateValue } from './StateProvider';
 import { loadStripe } from "@stripe/stripe-js";
@@ -43,10 +44,11 @@ function App() {
     <Router>
     <div className="App">
      <Routes>
-      <Route path="/Orders"  
+      <Route path="/orders"  
         element={
           <>
           <Header/>
+          <Orders/>
           </>
         }>
         </Route>
