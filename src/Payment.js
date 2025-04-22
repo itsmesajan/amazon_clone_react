@@ -47,39 +47,36 @@ function Payment() {
 
   console.log('THe secret is >>',clientSecret);
 
-  const handleSubmit =async(event)=>{
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setProcessing(true);
 
-    const payload = await stripe.confirmCardPayment(clientSecret,{
-      payment_method:{
-        card: elements.getElement(CardElement)
-      }
-    }).then(({paymentIntent})=>{
-      //paymentIntent = payment confirmation
+    const payload = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+      },
+    });
 
-      db
-        .collection('users')
-        .doc(user?.uid)
-        .collection('orders')
-        .doc(paymentIntent.id)
-        .set({
-          basket: basket,
-          amount: paymentIntent.amount,
-          created: paymentIntent.created
-        })
+    const paymentIntent = payload.paymentIntent;
 
-      setSucceeded(true);
-      setError(null)
-      setProcessing(false)
+    const orderRef = doc(db, "users", user?.uid, "orders", paymentIntent.id);
 
-      dispatch({
-        type:'EMPTY_BASKET'
-      })
+    await setDoc(orderRef, {
+      basket: basket,
+      amount: paymentIntent.amount,
+      created: paymentIntent.created,
+    });
 
-      navigate("/orders");
-    })
-  }
+    setSucceeded(true);
+    setError(null);
+    setProcessing(false);
+
+    dispatch({
+      type: "EMPTY_BASKET",
+    });
+
+    navigate("/orders");
+  };
 
   const handleChange = event=>{
     setDisabled(event.empty);
