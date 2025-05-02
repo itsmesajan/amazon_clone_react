@@ -1,12 +1,14 @@
 {
+  "homepage": "http://www.maharjan-sajan.com.np/amazon_clone_react/",
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
